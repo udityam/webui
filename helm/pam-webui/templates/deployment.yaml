@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pam-webui.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "pam-webui.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "pam-webui.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # zero-downtime deploys
+  template:
+    metadata:
+      labels:
+        {{- include "pam-webui.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "pam-webui.serviceAccountName" . }}
+      automountServiceAccountToken: false  # no K8s API access needed
+
+      # Pod-level security context
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      # Graceful shutdown
+      terminationGracePeriodSeconds: 30
+
+      # Anti-affinity: spread across nodes
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "pam-webui.selectorLabels" . | nindent 20 }}
+                topologyKey: kubernetes.io/hostname
+        {{- with .Values.affinity }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "pam-webui.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          # Container-level security context
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          # Liveness probe — restarts container if nginx stops responding
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+
+          # Readiness probe — removes pod from service endpoints until healthy
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+
+          # Resource limits prevent noisy-neighbor issues
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          # Mount tmp dirs as emptyDir so readOnlyRootFilesystem=true works
+          {{- if .Values.nginxTmpVolumes.enabled }}
+          volumeMounts:
+            - name: nginx-tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+          {{- end }}
+
+      volumes:
+        {{- if .Values.nginxTmpVolumes.enabled }}
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        {{- end }}

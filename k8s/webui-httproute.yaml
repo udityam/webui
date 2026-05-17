@@ -1,0 +1,51 @@
+# ─── Envoy Gateway HTTPRoute — PAM Web UI ────────────────────────────────────
+#
+# This HTTPRoute attaches to the existing pam-gateway (Envoy Gateway) and
+# routes ALL traffic NOT matched by more-specific routes (e.g. /api, /docs)
+# to the pam-webui ClusterIP service.
+#
+# Route specificity precedence (most-specific wins in Gateway API):
+#   1. /api/*  → core:5000   (PathPrefix /api — longer prefix wins)
+#   2. /docs   → core:5000   (PathPrefix /docs — longer prefix wins)
+#   3. /       → pam-webui:80 (PathPrefix / — catch-all)
+#
+# Apply with:
+#   kubectl apply -f k8s/webui-httproute.yaml -n pam
+# ─────────────────────────────────────────────────────────────────────────────
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webui-route
+  namespace: pam
+  labels:
+    app.kubernetes.io/name: pam-webui
+    app.kubernetes.io/component: httproute
+    app.kubernetes.io/part-of: pam-platform
+spec:
+  # Attach to the existing Envoy Gateway on the HTTPS listener
+  parentRefs:
+    - name: pam-gateway
+      namespace: pam
+      sectionName: https        # Must match the listener name in Gateway spec
+
+  # Restrict to the production hostname
+  hostnames:
+    - "example.com"
+
+  rules:
+    # ─── Rule: Serve Angular SPA for all other paths ─────────────────────────
+    # PathPrefix "/" is the least-specific match.
+    # The Gateway API will prefer /api/* and /docs over "/" when evaluating
+    # multiple HTTPRoutes attached to the same listener.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: "/"
+      backendRefs:
+        - name: pam-webui       # Name matches Helm service (fullname helper → pam-webui)
+          namespace: pam
+          port: 80              # ClusterIP service port (targets nginx on 8080)
+          weight: 100
+      # Optional: add response headers or timeouts here via filters
+      filters: []

@@ -1,0 +1,10 @@
+# Files and patterns to ignore when packaging Helm charts.
+.helmignore
+*.orig
+*.bak
+.git/
+.gitignore
+.DS_Store
+*.log
+tests/
+ci/
