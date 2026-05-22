@@ -29,10 +29,6 @@ spec:
       namespace: pam
       sectionName: https        # Must match the listener name in Gateway spec
 
-  # Restrict to the production hostname
-  hostnames:
-    - "example.com"
-
   rules:
     # ─── Rule: Serve Angular SPA for all other paths ─────────────────────────
     # PathPrefix "/" is the least-specific match.
