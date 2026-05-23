@@ -2,7 +2,7 @@ apiVersion: v2
 name: pam-webui
 description: Angular 18 Web UI for the PAM (Privileged Access Management) platform.
 type: application
-version: 0.1.3
+version: 0.1.4
 appVersion: "1.0.0"
 icon: https://angular.io/assets/images/logos/angular/angular.svg
 keywords:
@@ -10,9 +10,3 @@ keywords:
   - angular
   - nginx
   - frontend
-home: https://example.com
-# sources:
-#   - https://github.com/your-org/pam-webui
-maintainers:
-  - name: Platform Team
-    email: platform-team@example.com
