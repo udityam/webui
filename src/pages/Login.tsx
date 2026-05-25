@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import axios from "axios"
 
 const features = [
   "Centralized privileged access management",
@@ -15,12 +16,41 @@ const features = [
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => navigate("/dashboard"), 500);
-  };
+const onSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+
+  const username =
+    (document.getElementById("username") as HTMLInputElement).value;
+
+  const password =
+    (document.getElementById("password") as HTMLInputElement).value;
+
+  try {
+    const response = await axios.post(
+      "https://info.soft.com/api/v1/auth/login",
+      { username, password }
+    );
+
+    if (response.status === 200) {
+      navigate("/console/dashboard");
+    }
+
+  } catch (err: any) {
+
+    if (err.response?.status === 401) {
+      setError("Invalid credentials");
+    } else {
+      setError("Something went wrong");
+    }
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
@@ -112,6 +142,11 @@ const Login = () => {
               </label>
               <a href="#" className="text-primary hover:underline font-medium">Forgot password?</a>
             </div>
+             {error && (
+                 <p className="text-red-500 text-sm">
+                  {error}
+                </p>
+              )}
             <Button type="submit" className="w-full h-11 group" disabled={loading}>
               {loading ? "Signing in…" : (<>Sign in <ArrowRight className="size-4 ml-1 group-hover:translate-x-0.5 transition-transform" /></>)}
             </Button>
