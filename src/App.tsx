@@ -30,10 +30,21 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route element={<AppLayout />}>
             {ALL_ROUTES.map((r) => {
-              const Cmp = overrides[r.url] ?? ModulePage;
-              return <Route key={r.url} path={r.url} element={<Cmp />} />;
-            })}
-          </Route>
+               const Cmp = overrides[r.url] ?? ModulePage;
+
+                return (
+      <Route
+        key={r.url}
+        path={r.url}
+        element={
+          localStorage.getItem("isLoggedIn")
+            ? <Cmp />
+            : <Navigate to="/login" replace />
+        }
+      />
+    );
+  })}
+</Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
