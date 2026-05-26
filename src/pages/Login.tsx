@@ -31,12 +31,16 @@ const onSubmit = async (e: React.FormEvent) => {
 
   try {
     const response = await axios.post(
-      "https://info.soft.com/api/v1/auth/login",
-      { username, password }
-    );
+  `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
+  { username, password }
+);
 
     if (response.status === 200) {
-      navigate("/console/dashboard");
+
+   localStorage.setItem("isLoggedIn", "true");
+
+   navigate("/console/dashboard");
+
     }
 
   } catch (err: any) {
