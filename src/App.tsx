@@ -26,7 +26,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/console/dashboard" replace />} />
+        <Route
+  path="/"
+  element={
+    sessionStorage.getItem("isLoggedIn") === "true"
+      ? <Navigate to="/console/dashboard" replace />
+      : <Navigate to="/login" replace />
+  }
+/>
           <Route path="/login" element={<Login />} />
           <Route element={<AppLayout />}>
             {ALL_ROUTES.map((r) => {
@@ -37,7 +44,7 @@ const App = () => (
         key={r.url}
         path={r.url}
         element={
-          localStorage.getItem("isLoggedIn")
+          sessionStorage.getItem("isLoggedIn") === "true"
             ? <Cmp />
             : <Navigate to="/login" replace />
         }

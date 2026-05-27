@@ -20,6 +20,7 @@ const Login = () => {
 
 const onSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
+  sessionStorage.removeItem("isLoggedIn");
   setLoading(true);
   setError("");
 
@@ -35,11 +36,11 @@ const onSubmit = async (e: React.FormEvent) => {
   { username, password }
 );
 
-    if (response.status === 200) {
+  if (response.status === 200) {
 
-   localStorage.setItem("isLoggedIn", "true");
+   sessionStorage.setItem("isLoggedIn", "true");
 
-   navigate("/console/dashboard");
+   window.location.href = "/console/dashboard";
 
     }
 
