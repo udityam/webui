@@ -15,24 +15,21 @@ const ts = (mins: number) => `${mins} min ago`;
 export const MODULE_CONFIGS: Record<string, ModuleConfig> = {
   // ===== Console / Users =====
   "/console/users": {
-    title: "Users", description: "Manage console users and access roles.",
-    addLabel: "Create user",
-    columns: [
-      { key: "name", label: "Name" },
-      { key: "username", label: "Username" },
-      { key: "email", label: "Email" },
-      { key: "role", label: "Role" },
-      { key: "source", label: "Source" },
-      { key: "valid", label: "Valid" },
-    ],
-    rows: [
-      { name: "Aisha Khan", username: "aisha", email: "aisha@infosoft.io", role: "Admin", source: "Local", valid: "Yes" },
-      { name: "Ravi Sharma", username: "ravi", email: "ravi@infosoft.io", role: "Auditor", source: "LDAP", valid: "Yes" },
-      { name: "Maya Patel", username: "maya", email: "maya@infosoft.io", role: "User", source: "Local", valid: "No" },
-      { name: "Karan Mehta", username: "karan", email: "karan@infosoft.io", role: "Auditor", source: "OIDC", valid: "Yes" },
-      { name: "Neha Verma", username: "neha", email: "neha@infosoft.io", role: "User", source: "Local", valid: "Yes" },
-    ],
-  },
+  title: "Users",
+  description: "Manage console users and access roles.",
+  addLabel: "Create user",
+
+  columns: [
+    { key: "username", label: "Username" },
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "roles", label: "Roles" },
+    { key: "enabled", label: "Enabled" },
+  ],
+
+  rows: [],
+},
+
   "/console/users/groups": {
     title: "User groups", description: "Group users for permission assignment.",
     addLabel: "Create group",

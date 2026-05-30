@@ -1,14 +1,16 @@
-import { Plus, Search, Download, RefreshCw, SlidersHorizontal, MoreHorizontal } from "lucide-react";
+import { Plus, Search, Download, RefreshCw, SlidersHorizontal, MoreVertical, } from "lucide-react";
+import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import { PageHeader } from "@/components/PageHeader";
 import { ModuleConfig } from "@/lib/moduleConfigs";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useEffect } from "react";
 
 const STATUS_KEYS = new Set(["status", "state", "valid", "result", "risk", "severity", "linked", "enabled", "default"]);
 const goodValues = new Set(["active", "yes", "success", "approved", "running", "enabled", "normal", "online"]);
@@ -51,11 +53,58 @@ const renderCell = (key: string, value: string) => {
 
 export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
   const [q, setQ] = useState("");
+  const [rows, setRows] = useState(config.rows);
+const [loading, setLoading] = useState(false);
+const navigate = useNavigate();
+
+const loadUsers = async () => {
+  if (config.title !== "Users") return;
+
+  try {
+    setLoading(true);
+
+    const token =
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("token");
+
+    const response = await axios.get(
+  `${window.location.origin}/api/v1/users`,
+  {
+    withCredentials: true,
+  }
+);
+
+    const users = response.data;
+
+   setRows(
+  users.map((u: any) => ({
+    username: u.username ?? "—",
+    name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || "—",
+    email: u.email ?? "—",
+    roles: u.roles?.join(", ") ?? "—",
+    enabled: u.enabled ? "Yes" : "No",
+  }))
+);
+
+  } catch (err: any) {
+    console.error("List users failed", err);
+    
+   if (err.response?.status === 401) {
+  console.error("Unauthorized");
+}
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  loadUsers();
+}, []);
   const filtered = useMemo(() => {
-    if (!q.trim()) return config.rows;
+    if (!q.trim()) return rows;
     const s = q.toLowerCase();
-    return config.rows.filter((r) => Object.values(r).some((v) => v.toLowerCase().includes(s)));
-  }, [q, config.rows]);
+    return rows.filter((r) => Object.values(r).some((v) => v.toLowerCase().includes(s)));
+  }, [q, rows]);
 
   return (
     <div>
@@ -68,9 +117,14 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
               <Download className="size-4" /> Export
             </Button>
             {config.addLabel && (
-              <Button size="sm" className="gap-1.5 shadow-sm">
-                <Plus className="size-4" /> {config.addLabel}
-              </Button>
+              <Button
+  size="sm"
+  className="gap-1.5 shadow-sm"
+  onClick={() => navigate("/console/users/create")}
+>
+  <Plus className="size-4" />
+  {config.addLabel}
+</Button>
             )}
           </>
         }
@@ -89,13 +143,24 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
           <Button variant="outline" size="sm" className="gap-1.5 h-9">
             <SlidersHorizontal className="size-3.5" /> Filters
           </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Refresh">
+          <Button
+  variant="ghost"
+  size="icon"
+  className="h-9 w-9"
+  aria-label="Refresh"
+  onClick={loadUsers}
+>
             <RefreshCw className="size-4" />
           </Button>
           <div className="text-xs text-muted-foreground ml-auto font-medium">
             {filtered.length} {filtered.length === 1 ? "result" : "results"}
           </div>
         </div>
+        {loading && (
+  <div className="p-4 text-sm text-muted-foreground">
+    Loading users...
+  </div>
+)}
         <div className="overflow-auto">
           <Table>
             <TableHeader>
@@ -117,10 +182,44 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
                     </TableCell>
                   ))}
                   <TableCell>
-                    <Button variant="ghost" size="icon" className="size-8 opacity-60 hover:opacity-100">
-                      <MoreHorizontal className="size-4" />
-                    </Button>
-                  </TableCell>
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="ghost" size="icon">
+      <MoreVertical className="size-4" />
+    </Button>
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent align="end">
+
+    <DropdownMenuItem
+      onClick={() => console.log("UPDATE", r.id)}
+    >
+      Update
+    </DropdownMenuItem>
+
+    <DropdownMenuItem
+      className="text-red-500"
+      onClick={async () => {
+        try {
+
+          await axios.delete(
+            `${window.location.origin}/api/v1/users/${r.id}`
+          );
+
+          loadUsers();
+
+        } catch (err) {
+          console.error(err);
+        }
+      }}
+    >
+      Delete
+    </DropdownMenuItem>
+
+  </DropdownMenuContent>
+</DropdownMenu>
+</TableCell>
                 </TableRow>
               ))}
               {filtered.length === 0 && (
