@@ -31,18 +31,33 @@ const onSubmit = async (e: React.FormEvent) => {
     (document.getElementById("password") as HTMLInputElement).value;
 
   try {
-    const response = await axios.post(
+   const response = await axios.post(
   `${window.location.origin}/api/v1/auth/login`,
-  { username, password }
+  { username, password },
+  {
+    withCredentials: true,
+  }
 );
 
-  if (response.status === 200) {
+console.log("LOGIN RESPONSE:", response.data);
 
-   sessionStorage.setItem("isLoggedIn", "true");
+ if (response.status === 200) {
 
-   window.location.href = "/console/dashboard";
+  const token =
+  response.data.access_token ||
+  response.data.token ||
+  response.data.accessToken;
 
-    }
+  sessionStorage.setItem("token", token);
+  localStorage.setItem("token", token);
+
+  axios.defaults.headers.common["Authorization"] =
+    `Bearer ${token}`;
+
+  sessionStorage.setItem("isLoggedIn", "true");
+
+  window.location.href = "/console/dashboard";
+}
 
   } catch (err: any) {
 

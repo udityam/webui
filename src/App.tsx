@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ModulePage from "./pages/ModulePage";
+import CreateUser from "@/components/CreateUser";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ALL_ROUTES } from "./lib/nav";
 
@@ -29,13 +30,21 @@ const App = () => (
         <Route
   path="/"
   element={
-    sessionStorage.getItem("isLoggedIn") === "true"
+    (
+      sessionStorage.getItem("isLoggedIn") === "true" ||
+      !!sessionStorage.getItem("token") ||
+      !!localStorage.getItem("token")
+    )
       ? <Navigate to="/console/dashboard" replace />
       : <Navigate to="/login" replace />
   }
 />
           <Route path="/login" element={<Login />} />
           <Route element={<AppLayout />}>
+          <Route
+  path="/console/users/create"
+  element={<CreateUser />}
+/>
             {ALL_ROUTES.map((r) => {
                const Cmp = overrides[r.url] ?? ModulePage;
 
@@ -44,10 +53,14 @@ const App = () => (
         key={r.url}
         path={r.url}
         element={
-          sessionStorage.getItem("isLoggedIn") === "true"
-            ? <Cmp />
-            : <Navigate to="/login" replace />
-        }
+  (
+    sessionStorage.getItem("isLoggedIn") === "true" ||
+    !!sessionStorage.getItem("token") ||
+    !!localStorage.getItem("token")
+  )
+    ? <Cmp />
+    : <Navigate to="/login" replace />
+}
       />
     );
   })}
