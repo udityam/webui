@@ -28,32 +28,32 @@ const CreateUser = () => {
 
       setLoading(true);
 
-const [firstName, lastName] = form.name.split(" ");
+      const [firstName, lastName] = form.name.split(" ");
 
-await axios.post(`${window.location.origin}/api/v1/users`, {
-  username: form.username,
-  email: form.email,
-  firstname: firstName || "",
-  lastname: lastName || "",
-  password: form.password,
-  temporary_password: true,
-  roles: [form.roles],
-});
-   setSuccess("User created successfully!");
+      await axios.post(`${window.location.origin}/api/v1/users`, {
+        username: form.username,
+        email: form.email,
+        firstname: firstName || "",
+        lastname: lastName || "",
+        password: form.password,
+        temporary_password: true,
+        roles: [form.roles],
+      });
+      setSuccess("User created successfully!");
 
-setTimeout(() => {
-  navigate("/console/users");
-}, 1500);
+      setTimeout(() => {
+        navigate("/console/users");
+      }, 1500);
 
     } catch (err: any) {
 
-  console.log(
-    "CREATE USER ERROR:",
-    err.response?.data
-  );
+      console.log(
+        "CREATE USER ERROR:",
+        err.response?.data
+      );
 
-  console.error(err);
-  } finally {
+      console.error(err);
+    } finally {
 
       setLoading(false);
 
@@ -64,23 +64,23 @@ setTimeout(() => {
     <div className="p-6">
 
       <Card className="max-w-2xl mx-auto p-6 space-y-5">
-      <Button
-  variant="ghost"
-  onClick={() => navigate("/console/users")}
-  className="mb-4 gap-2"
->
-  <ArrowLeft className="size-4" />
-  Back
-</Button>
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/console/users")}
+          className="mb-4 gap-2"
+        >
+          <ArrowLeft className="size-4" />
+          Back
+        </Button>
 
         <h1 className="text-2xl font-bold">
           Create User
         </h1>
         {success && (
-  <p className="text-green-600 text-sm mb-3">
-    {success}
-  </p>
-)}
+          <p className="text-green-600 text-sm mb-3">
+            {success}
+          </p>
+        )}
 
         <div className="space-y-2">
 

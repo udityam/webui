@@ -8,6 +8,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ModulePage from "./pages/ModulePage";
 import CreateUser from "@/components/CreateUser";
+import UpdateUser from "./components/UpdateUser";
+import GetUser from "./components/GetUser";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ALL_ROUTES } from "./lib/nav";
 
@@ -44,6 +46,14 @@ const App = () => (
           <Route
   path="/console/users/create"
   element={<CreateUser />}
+/>
+<Route
+  path="/console/users/:userId/update"
+  element={<UpdateUser />}
+/>
+<Route
+  path="/console/users/:userId"
+  element={<GetUser />}
 />
             {ALL_ROUTES.map((r) => {
                const Cmp = overrides[r.url] ?? ModulePage;

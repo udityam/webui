@@ -1,10 +1,10 @@
 import { Plus, Search, Download, RefreshCw, SlidersHorizontal, MoreVertical, } from "lucide-react";
-import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { PageHeader } from "@/components/PageHeader";
 import { ModuleConfig } from "@/lib/moduleConfigs";
 import { useMemo, useState } from "react";
@@ -54,52 +54,55 @@ const renderCell = (key: string, value: string) => {
 export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
   const [q, setQ] = useState("");
   const [rows, setRows] = useState(config.rows);
-const [loading, setLoading] = useState(false);
-const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
 
-const loadUsers = async () => {
-  if (config.title !== "Users") return;
+  const loadUsers = async () => {
+    if (config.title !== "Users") return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const token =
-      localStorage.getItem("token") ||
-      sessionStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") ||
+        sessionStorage.getItem("token");
 
-    const response = await axios.get(
-  `${window.location.origin}/api/v1/users`,
-  {
-    withCredentials: true,
-  }
-);
+      const response = await axios.get(
+        `${window.location.origin}/api/v1/users`,
+        {
+          withCredentials: true,
+        }
+      );
 
-    const users = response.data;
+      const users = response.data;
 
-   setRows(
-  users.map((u: any) => ({
-    username: u.username ?? "—",
-    name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || "—",
-    email: u.email ?? "—",
-    roles: u.roles?.join(", ") ?? "—",
-    enabled: u.enabled ? "Yes" : "No",
-  }))
-);
 
-  } catch (err: any) {
-    console.error("List users failed", err);
-    
-   if (err.response?.status === 401) {
-  console.error("Unauthorized");
-}
-  } finally {
-    setLoading(false);
-  }
-};
+      setRows(
+        users.map((u: any) => ({
+          user_id: u.user_id ?? u.id,
+          username: u.username ?? "—",
+          name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || "—",
+          email: u.email ?? "—",
+          roles: u.roles?.join(", ") ?? "—",
+          enabled: u.enabled ? "Yes" : "No",
+        }))
+      );
 
-useEffect(() => {
-  loadUsers();
-}, []);
+    } catch (err: any) {
+      console.error("List users failed", err);
+
+      if (err.response?.status === 401) {
+        console.error("Unauthorized");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
   const filtered = useMemo(() => {
     if (!q.trim()) return rows;
     const s = q.toLowerCase();
@@ -118,13 +121,13 @@ useEffect(() => {
             </Button>
             {config.addLabel && (
               <Button
-  size="sm"
-  className="gap-1.5 shadow-sm"
-  onClick={() => navigate("/console/users/create")}
->
-  <Plus className="size-4" />
-  {config.addLabel}
-</Button>
+                size="sm"
+                className="gap-1.5 shadow-sm"
+                onClick={() => navigate("/console/users/create")}
+              >
+                <Plus className="size-4" />
+                {config.addLabel}
+              </Button>
             )}
           </>
         }
@@ -144,12 +147,12 @@ useEffect(() => {
             <SlidersHorizontal className="size-3.5" /> Filters
           </Button>
           <Button
-  variant="ghost"
-  size="icon"
-  className="h-9 w-9"
-  aria-label="Refresh"
-  onClick={loadUsers}
->
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            aria-label="Refresh"
+            onClick={loadUsers}
+          >
             <RefreshCw className="size-4" />
           </Button>
           <div className="text-xs text-muted-foreground ml-auto font-medium">
@@ -157,10 +160,10 @@ useEffect(() => {
           </div>
         </div>
         {loading && (
-  <div className="p-4 text-sm text-muted-foreground">
-    Loading users...
-  </div>
-)}
+          <div className="p-4 text-sm text-muted-foreground">
+            Loading users...
+          </div>
+        )}
         <div className="overflow-auto">
           <Table>
             <TableHeader>
@@ -178,48 +181,84 @@ useEffect(() => {
                 <TableRow key={i} className="border-border/60 hover:bg-secondary/40 transition-colors">
                   {config.columns.map((c, j) => (
                     <TableCell key={c.key} className={j === 0 ? "font-medium" : "text-foreground/80"}>
-                      {renderCell(c.key, r[c.key] ?? "—")}
+                      {c.key === "username" ? (
+                        <button
+                          className="text-blue-600 hover:underline"
+                          onClick={() =>
+                            navigate(`/console/users/${r.user_id}`)
+                          }
+                        >
+                          {r.username}
+                        </button>
+                      ) : (
+                        renderCell(c.key, r[c.key] ?? "—")
+                      )}
                     </TableCell>
                   ))}
                   <TableCell>
 
-<DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    <Button variant="ghost" size="icon">
-      <MoreVertical className="size-4" />
-    </Button>
-  </DropdownMenuTrigger>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
 
-  <DropdownMenuContent align="end">
+                      <DropdownMenuContent align="end">
 
-    <DropdownMenuItem
-      onClick={() => console.log("UPDATE", r.id)}
-    >
-      Update
-    </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
 
-    <DropdownMenuItem
-      className="text-red-500"
-      onClick={async () => {
-        try {
+                            navigate(`/console/users/${r.user_id}/update`);
+                          }}
+                        >
+                          Update
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-500"
+                          onClick={async () => {
 
-          await axios.delete(
-            `${window.location.origin}/api/v1/users/${r.id}`
-          );
+                            const confirmDelete =
+                              window.confirm(
+                                `Delete user ${r.user_id}?`
+                              );
 
-          loadUsers();
+                            if (!confirmDelete) return;
 
-        } catch (err) {
-          console.error(err);
-        }
-      }}
-    >
-      Delete
-    </DropdownMenuItem>
+                            try {
 
-  </DropdownMenuContent>
-</DropdownMenu>
-</TableCell>
+                              setDeleting(true);
+
+                              await axios.delete(
+                                `${window.location.origin}/api/v1/users/${r.user_id}`
+                              );
+
+                              alert("User deleted successfully");
+
+                              window.location.reload();
+
+                            } catch (err) {
+
+                              console.error(
+                                "DELETE ERROR:",
+                                err
+                              );
+
+                              alert("Delete failed");
+
+                            } finally {
+
+                              setDeleting(false);
+
+                            }
+                          }}
+                        >
+                          {deleting ? "Deleting..." : "Delete"}
+                        </DropdownMenuItem>
+
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
               {filtered.length === 0 && (
