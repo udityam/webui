@@ -13,59 +13,126 @@ export type NavSection = { title: string; url: string; icon: React.ComponentType
 
 export const SECTIONS: NavSection[] = [
   {
-    title: "Console", url: "/console", icon: LayoutDashboard,
+    title: "Console",
+    url: "/console",
+    icon: LayoutDashboard,
     groups: [
-      { title: "Dashboard", url: "/console/dashboard", icon: LayoutDashboard },
-      { title: "Users", icon: UsersIcon, items: [
-        { title: "User List", url: "/console/users" },
-        { title: "User Groups", url: "/console/users/groups" },
-      ]},
-      { title: "Assets", icon: Server, items: [
-        { title: "All Assets", url: "/console/assets" },
-        { title: "Hosts", url: "/console/assets/hosts" },
-        { title: "Databases", url: "/console/assets/databases" },
-        { title: "Devices", url: "/console/assets/devices" },
-        { title: "Clouds", url: "/console/assets/clouds" },
-        { title: "Webs", url: "/console/assets/webs" },
-        { title: "GPTs", url: "/console/assets/gpts" },
-        { title: "Custom Assets", url: "/console/assets/customs" },
-        { title: "Zones", url: "/console/assets/zones" },
-        { title: "Gateways", url: "/console/assets/gateways" },
-        { title: "Platforms", url: "/console/assets/platforms" },
-      ]},
-      { title: "Accounts", icon: KeyRound, items: [
-        { title: "Asset Accounts", url: "/console/accounts" },
-        { title: "Virtual Accounts", url: "/console/accounts/virtual" },
-        { title: "Account Templates", url: "/console/accounts/templates" },
-      ]},
-      { title: "Permissions", icon: Shield, items: [
-        { title: "Asset Permissions", url: "/console/perms/asset" },
-      ]},
-      { title: "More", icon: Shapes, items: [
-        { title: "Labels", url: "/console/labels" },
-        { title: "Cloud Sync", url: "/console/cloud" },
-        { title: "Strategy", url: "/console/cloud/strategy" },
-      ]},
+      {
+        title: "Dashboard",
+        url: "/console/dashboard",
+        icon: LayoutDashboard,
+      },
+
+      {
+        title: "Vault",
+        icon: Shield,
+        items: [
+          { title: "Folders (Safes)", url: "/console/vault/folders" },
+          { title: "Secret Templates", url: "/console/vault/templates" },
+          { title: "Passwords", url: "/console/vault/passwords" },
+          { title: "SSH Keys", url: "/console/vault/ssh-keys" },
+          { title: "API Keys", url: "/console/vault/api-keys" },
+          { title: "Certificates", url: "/console/vault/certificates" },
+          { title: "Checkout / Check-in", url: "/console/vault/checkout" },
+          { title: "Password History", url: "/console/vault/history" },
+          { title: "A2A Access", url: "/console/vault/a2a" },
+        ],
+      },
+
+      {
+        title: "Assets",
+        icon: Server,
+        items: [
+          { title: "Servers & Hosts", url: "/console/assets/servers" },
+          { title: "Databases", url: "/console/assets/databases" },
+          { title: "Network Devices", url: "/console/assets/network-devices" },
+          { title: "Applications", url: "/console/assets/applications" },
+          { title: "Cloud / Kubernetes", url: "/console/assets/cloud" },
+          { title: "Discovery Wizard", url: "/console/assets/discovery" },
+          { title: "Import & Bulk", url: "/console/assets/import" },
+        ],
+      },
+
+      {
+        title: "Access",
+        icon: KeyRound,
+        items: [
+          { title: "Sessions", url: "/console/access/sessions" },
+          { title: "Access Requests", url: "/console/access/requests" },
+          { title: "Launchpad", url: "/console/access/launchpad" },
+          { title: "Ad Hoc Connection", url: "/console/access/adhoc" },
+          { title: "Emergency Access", url: "/console/access/emergency" },
+          { title: "Privilege Elevation", url: "/console/access/elevation" },
+          { title: "Vendor Access", url: "/console/access/vendor" },
+        ],
+      },
+
+      {
+        title: "Policies",
+        icon: FileText,
+        items: [
+          { title: "Target Platforms", url: "/console/policies/platforms" },
+          { title: "Password Rotation", url: "/console/policies/password-rotation" },
+          { title: "Session Policies", url: "/console/policies/session" },
+          { title: "Approval Workflows", url: "/console/policies/approval" },
+          { title: "MFA Rules", url: "/console/policies/mfa" },
+          { title: "Time Restrictions", url: "/console/policies/time" },
+          { title: "Command Filters", url: "/console/policies/commands" },
+          { title: "Risk Rules", url: "/console/policies/risk" },
+          { title: "Geo-fencing", url: "/console/policies/geofence" },
+        ],
+      },
+
+      {
+        title: "Audit",
+        icon: Activity,
+        items: [
+          { title: "Live Feed", url: "/console/audit/live-feed" },
+          { title: "Reports", url: "/console/audit/reports" },
+          { title: "Session Recordings", url: "/console/audit/recordings" },
+          { title: "Analytics", url: "/console/audit/analytics" },
+          { title: "Compliance Mapping", url: "/console/audit/compliance" },
+        ],
+      },
+
+      {
+        title: "Settings",
+        icon: SettingsIcon,
+        items: [
+          { title: "User", url: "/console/settings/users" },
+          { title: "Roles & Permissions", url: "/console/settings/roles" },
+          { title: "Authentication", url: "/console/settings/authentication" },
+          { title: "API & Webhooks", url: "/console/settings/api-webhooks" },
+          { title: "Notifications", url: "/console/settings/notifications" },
+          { title: "Backup & Restore", url: "/console/settings/backup-restore" },
+          { title: "System Health", url: "/console/settings/system-health" },
+          { title: "License", url: "/console/settings/license" },
+        ],
+      },
     ],
   },
   {
     title: "PAM", url: "/pam", icon: Lock,
     groups: [
       { title: "Dashboard", url: "/pam/dashboard", icon: LayoutDashboard },
-      { title: "ACLs", icon: ListChecks, items: [
-        { title: "Login ACLs", url: "/pam/acls/login" },
-        { title: "Asset Login ACLs", url: "/pam/acls/login-asset" },
-        { title: "Command Filter ACLs", url: "/pam/acls/cmd" },
-        { title: "Command Groups", url: "/pam/acls/cmd-groups" },
-        { title: "Connect Method ACLs", url: "/pam/acls/connect-method" },
-        { title: "Data Masking", url: "/pam/acls/data-masking" },
-      ]},
-      { title: "Sessions", icon: Activity, items: [
-        { title: "Sessions", url: "/pam/sessions" },
-        { title: "Commands", url: "/pam/commands" },
-        { title: "Web Terminal", url: "/pam/terminal" },
-        { title: "File Management", url: "/pam/files" },
-      ]},
+      {
+        title: "ACLs", icon: ListChecks, items: [
+          { title: "Login ACLs", url: "/pam/acls/login" },
+          { title: "Asset Login ACLs", url: "/pam/acls/login-asset" },
+          { title: "Command Filter ACLs", url: "/pam/acls/cmd" },
+          { title: "Command Groups", url: "/pam/acls/cmd-groups" },
+          { title: "Connect Method ACLs", url: "/pam/acls/connect-method" },
+          { title: "Data Masking", url: "/pam/acls/data-masking" },
+        ]
+      },
+      {
+        title: "Sessions", icon: Activity, items: [
+          { title: "Sessions", url: "/pam/sessions" },
+          { title: "Commands", url: "/pam/commands" },
+          { title: "Web Terminal", url: "/pam/terminal" },
+          { title: "File Management", url: "/pam/files" },
+        ]
+      },
     ],
   },
   {
@@ -83,18 +150,22 @@ export const SECTIONS: NavSection[] = [
     title: "Workbench", url: "/workbench", icon: Briefcase,
     groups: [
       { title: "Overview", url: "/workbench/home", icon: LayoutDashboard },
-      { title: "My Assets", icon: Server, items: [
-        { title: "Connect Assets", url: "/workbench/assets" },
-        { title: "File Transfer", url: "/workbench/assets/file-transfer" },
-        { title: "K8s", url: "/workbench/assets/k8s" },
-      ]},
-      { title: "Job Center", icon: Terminal, items: [
-        { title: "Jobs", url: "/workbench/jobs" },
-        { title: "Adhoc", url: "/workbench/jobs/adhoc" },
-        { title: "Playbook", url: "/workbench/jobs/playbook" },
-        { title: "Schedules", url: "/workbench/jobs/schedules" },
-        { title: "Job Logs", url: "/workbench/jobs/logs" },
-      ]},
+      {
+        title: "My Assets", icon: Server, items: [
+          { title: "Connect Assets", url: "/workbench/assets" },
+          { title: "File Transfer", url: "/workbench/assets/file-transfer" },
+          { title: "K8s", url: "/workbench/assets/k8s" },
+        ]
+      },
+      {
+        title: "Job Center", icon: Terminal, items: [
+          { title: "Jobs", url: "/workbench/jobs" },
+          { title: "Adhoc", url: "/workbench/jobs/adhoc" },
+          { title: "Playbook", url: "/workbench/jobs/playbook" },
+          { title: "Schedules", url: "/workbench/jobs/schedules" },
+          { title: "Job Logs", url: "/workbench/jobs/logs" },
+        ]
+      },
     ],
   },
   {

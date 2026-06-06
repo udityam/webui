@@ -123,7 +123,7 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
               <Button
                 size="sm"
                 className="gap-1.5 shadow-sm"
-                onClick={() => navigate("/console/users/create")}
+                onClick={() => navigate("/console/settings/users/create")}
               >
                 <Plus className="size-4" />
                 {config.addLabel}
@@ -185,7 +185,7 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
                         <button
                           className="text-blue-600 hover:underline"
                           onClick={() =>
-                            navigate(`/console/users/${r.user_id}`)
+                            navigate(`/console/settings/users/${r.user_id}`)
                           }
                         >
                           {r.username}
@@ -209,7 +209,7 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
                         <DropdownMenuItem
                           onClick={() => {
 
-                            navigate(`/console/users/${r.user_id}/update`);
+                            navigate(`/console/settings/users/${r.user_id}/update`);
                           }}
                         >
                           Update

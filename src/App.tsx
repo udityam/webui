@@ -7,9 +7,9 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ModulePage from "./pages/ModulePage";
-import CreateUser from "@/components/CreateUser";
-import UpdateUser from "./components/UpdateUser";
-import GetUser from "./components/GetUser";
+import CreateUser from "@/pages/settings/user/CreateUser";
+import UpdateUser from "./pages/settings/user/UpdateUser";
+import GetUser from "./pages/settings/user/GetUser";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ALL_ROUTES } from "./lib/nav";
 
@@ -29,52 +29,52 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-        <Route
-  path="/"
-  element={
-    (
-      sessionStorage.getItem("isLoggedIn") === "true" ||
-      !!sessionStorage.getItem("token") ||
-      !!localStorage.getItem("token")
-    )
-      ? <Navigate to="/console/dashboard" replace />
-      : <Navigate to="/login" replace />
-  }
-/>
+          <Route
+            path="/"
+            element={
+              (
+                sessionStorage.getItem("isLoggedIn") === "true" ||
+                !!sessionStorage.getItem("token") ||
+                !!localStorage.getItem("token")
+              )
+                ? <Navigate to="/console/dashboard" replace />
+                : <Navigate to="/login" replace />
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route element={<AppLayout />}>
-          <Route
-  path="/console/users/create"
-  element={<CreateUser />}
-/>
-<Route
-  path="/console/users/:userId/update"
-  element={<UpdateUser />}
-/>
-<Route
-  path="/console/users/:userId"
-  element={<GetUser />}
-/>
+            <Route
+              path="/console/settings/users/create"
+              element={<CreateUser />}
+            />
+            <Route
+              path="/console/settings/users/:userId/update"
+              element={<UpdateUser />}
+            />
+            <Route
+              path="/console/settings/users/:userId"
+              element={<GetUser />}
+            />
             {ALL_ROUTES.map((r) => {
-               const Cmp = overrides[r.url] ?? ModulePage;
+              const Cmp = overrides[r.url] ?? ModulePage;
 
-                return (
-      <Route
-        key={r.url}
-        path={r.url}
-        element={
-  (
-    sessionStorage.getItem("isLoggedIn") === "true" ||
-    !!sessionStorage.getItem("token") ||
-    !!localStorage.getItem("token")
-  )
-    ? <Cmp />
-    : <Navigate to="/login" replace />
-}
-      />
-    );
-  })}
-</Route>
+              return (
+                <Route
+                  key={r.url}
+                  path={r.url}
+                  element={
+                    (
+                      sessionStorage.getItem("isLoggedIn") === "true" ||
+                      !!sessionStorage.getItem("token") ||
+                      !!localStorage.getItem("token")
+                    )
+                      ? <Cmp />
+                      : <Navigate to="/login" replace />
+                  }
+                />
+              );
+            })}
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
