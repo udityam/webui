@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { PageHeader } from "@/components/PageHeader";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModuleConfig } from "@/lib/moduleConfigs";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 
@@ -56,6 +58,7 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
   const [rows, setRows] = useState(config.rows);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const [deleting, setDeleting] = useState(false);
 
   const loadUsers = async () => {
@@ -100,9 +103,36 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
     }
   };
 
+  const loadRoles = async () => {
+    if (config.title !== "Roles") return;
+
+    try {
+      setLoading(true);
+
+      const response = await axios.get(
+        `${window.location.origin}/api/v1/roles`
+      );
+
+      setRows(
+        response.data.map((r: any) => ({
+          name: r.name ?? "—",
+          description: r.description ?? "—",
+          composite: r.composite ? "Yes" : "No",
+          clientRole: r.clientRole ? "Yes" : "No",
+        }))
+      );
+    } catch (err) {
+      console.error("LOAD ROLES ERROR:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadUsers();
+    loadRoles();
   }, []);
+
   const filtered = useMemo(() => {
     if (!q.trim()) return rows;
     const s = q.toLowerCase();
@@ -111,6 +141,78 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
 
   return (
     <div>
+      {(
+        config.title === "Users" ||
+        config.title === "Roles"
+      ) && (
+          <div className="mb-6 border-b border-slate-100 dark:border-zinc-800/80 w-full">
+            <div className="flex gap-4">
+
+              {/* 1. User Tab Button */}
+              <button
+                onClick={() => navigate("/console/settings/users")}
+                className={`
+        relative flex items-center gap-2 px-4 py-3.5 text-sm font-semibold transition-all duration-300 select-none group outline-none
+        ${location.pathname.includes("/console/settings/users")
+                    ? "text-primary dark:text-indigo-400 font-bold"
+                    : "text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
+                  }
+      `}
+              >
+                <svg
+                  className={`w-4 h-4 transition-transform duration-300 ${location.pathname.includes("/console/settings/users")
+                      ? "text-primary scale-110"
+                      : "text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300 group-hover:scale-105"
+                    }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span>User</span>
+
+                {/* Sliding Glowing Line Indicator */}
+                {location.pathname.includes("/console/settings/users") && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary dark:bg-indigo-400 rounded-t-full shadow-lg shadow-primary/50" />
+                )}
+              </button>
+
+              {/* 2. Roles Tab Button */}
+              <button
+                onClick={() => navigate("/console/settings/roles")}
+                className={`
+        relative flex items-center gap-2 px-4 py-3.5 text-sm font-semibold transition-all duration-300 select-none group outline-none
+        ${location.pathname.includes("/console/settings/roles")
+                    ? "text-primary dark:text-indigo-400 font-bold"
+                    : "text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
+                  }
+      `}
+              >
+                <svg
+                  className={`w-4 h-4 transition-transform duration-300 ${location.pathname.includes("/console/settings/roles")
+                      ? "text-primary scale-110"
+                      : "text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300 group-hover:scale-105"
+                    }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span>Roles</span>
+
+                {/* Sliding Glowing Line Indicator */}
+                {location.pathname.includes("/console/settings/roles") && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary dark:bg-indigo-400 rounded-t-full shadow-lg shadow-primary/50" />
+                )}
+              </button>
+
+            </div>
+          </div>
+        )}
       <PageHeader
         title={config.title}
         description={config.description}
@@ -123,7 +225,13 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
               <Button
                 size="sm"
                 className="gap-1.5 shadow-sm"
-                onClick={() => navigate("/console/settings/users/create")}
+                onClick={() =>
+                  navigate(
+                    config.title === "Roles"
+                      ? "/console/settings/roles/create"
+                      : "/console/settings/users/create"
+                  )
+                }
               >
                 <Plus className="size-4" />
                 {config.addLabel}
@@ -208,8 +316,11 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
 
                         <DropdownMenuItem
                           onClick={() => {
-
-                            navigate(`/console/settings/users/${r.user_id}/update`);
+                            if (config.title === "Roles") {
+                              navigate(`/console/settings/roles/${r.name}/update`);
+                            } else {
+                              navigate(`/console/settings/users/${r.user_id}/update`);
+                            }
                           }}
                         >
                           Update
@@ -218,10 +329,14 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
                           className="text-red-500"
                           onClick={async () => {
 
-                            const confirmDelete =
-                              window.confirm(
-                                `Delete user ${r.user_id}?`
-                              );
+                            const itemName =
+                              config.title === "Roles"
+                                ? r.name
+                                : r.user_id;
+
+                            const confirmDelete = window.confirm(
+                              `Delete ${itemName}?`
+                            );
 
                             if (!confirmDelete) return;
 
@@ -229,11 +344,22 @@ export const DataTablePage = ({ config }: { config: ModuleConfig }) => {
 
                               setDeleting(true);
 
-                              await axios.delete(
-                                `${window.location.origin}/api/v1/users/${r.user_id}`
-                              );
+                              if (config.title === "Roles") {
 
-                              alert("User deleted successfully");
+                                await axios.delete(
+                                  `${window.location.origin}/api/v1/roles/${r.name}`
+                                );
+
+                                alert("Role deleted successfully");
+
+                              } else {
+
+                                await axios.delete(
+                                  `${window.location.origin}/api/v1/users/${r.user_id}`
+                                );
+
+                                alert("User deleted successfully");
+                              }
 
                               window.location.reload();
 

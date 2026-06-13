@@ -99,8 +99,7 @@ export const SECTIONS: NavSection[] = [
         title: "Settings",
         icon: SettingsIcon,
         items: [
-          { title: "User", url: "/console/settings/users" },
-          { title: "Roles & Permissions", url: "/console/settings/roles" },
+          { title: "User Management", url: "/console/settings/users" },
           { title: "Authentication", url: "/console/settings/authentication" },
           { title: "API & Webhooks", url: "/console/settings/api-webhooks" },
           { title: "Notifications", url: "/console/settings/notifications" },

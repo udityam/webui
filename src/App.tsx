@@ -10,6 +10,10 @@ import ModulePage from "./pages/ModulePage";
 import CreateUser from "@/pages/settings/user/CreateUser";
 import UpdateUser from "./pages/settings/user/UpdateUser";
 import GetUser from "./pages/settings/user/GetUser";
+import RoleList from "@/pages/settings/user/RoleList";
+import CreateRole from "@/pages/settings/user/CreateRole";
+import UpdateRole from "@/pages/settings/user/UpdateRole";
+import GetRole from "@/pages/settings/user/GetRole";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ALL_ROUTES } from "./lib/nav";
 
@@ -54,6 +58,25 @@ const App = () => (
             <Route
               path="/console/settings/users/:userId"
               element={<GetUser />}
+            />
+            <Route
+              path="/console/settings/roles"
+              element={<RoleList />}
+            />
+
+            <Route
+              path="/console/settings/roles/create"
+              element={<CreateRole />}
+            />
+
+            <Route
+              path="/console/settings/roles/:roleName"
+              element={<GetRole />}
+            />
+
+            <Route
+              path="/console/settings/roles/:roleName/update"
+              element={<UpdateRole />}
             />
             {ALL_ROUTES.map((r) => {
               const Cmp = overrides[r.url] ?? ModulePage;

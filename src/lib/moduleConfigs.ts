@@ -29,6 +29,20 @@ export const MODULE_CONFIGS: Record<string, ModuleConfig> = {
 
   rows: [],
 },
+"/console/settings/roles": {
+  title: "Roles",
+  description: "Manage roles and permissions.",
+  addLabel: "Create Role",
+
+  columns: [
+    { key: "name", label: "Role Name" },
+    { key: "description", label: "Description" },
+    { key: "composite", label: "Composite" },
+    { key: "clientRole", label: "Client Role" },
+  ],
+
+  rows: [],
+},
 
   // ===== PAM =====
   "/pam/acls/login": {
