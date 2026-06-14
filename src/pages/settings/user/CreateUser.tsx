@@ -42,7 +42,7 @@ const CreateUser = () => {
       setSuccess("User created successfully!");
 
       setTimeout(() => {
-        navigate("/console/users");
+        navigate("/console/settings/users");
       }, 1500);
 
     } catch (err: any) {
@@ -66,7 +66,7 @@ const CreateUser = () => {
       <Card className="max-w-2xl mx-auto p-6 space-y-5">
         <Button
           variant="ghost"
-          onClick={() => navigate("/console/users")}
+          onClick={() => navigate("/console/settings/users")}
           className="mb-4 gap-2"
         >
           <ArrowLeft className="size-4" />
@@ -180,7 +180,7 @@ const CreateUser = () => {
 
           <Button
             variant="outline"
-            onClick={() => navigate("/console/users")}
+            onClick={() => navigate("/console/settings/users")}
           >
             Cancel
           </Button>

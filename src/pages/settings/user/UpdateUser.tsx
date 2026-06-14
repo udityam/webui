@@ -69,7 +69,7 @@ const UpdateUser = () => {
       setSuccess("User updated successfully!");
 
       setTimeout(() => {
-        navigate("/console/users");
+        navigate("/console/settings/users");
       }, 1500);
 
     } catch (err) {
@@ -93,7 +93,7 @@ const UpdateUser = () => {
 
         <Button
           variant="ghost"
-          onClick={() => navigate("/console/users")}
+          onClick={() => navigate("/console/settings/users")}
           className="mb-4 gap-2"
         >
           <ArrowLeft className="size-4" />
@@ -193,7 +193,7 @@ const UpdateUser = () => {
           <Button
             variant="outline"
             onClick={() =>
-              navigate("/console/users")
+              navigate("/console/settings/users")
             }
           >
             Cancel

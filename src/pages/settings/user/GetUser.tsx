@@ -54,7 +54,7 @@ const GetUser = () => {
 
         <Button
           variant="ghost"
-          onClick={() => navigate("/console/users")}
+          onClick={() => navigate("/console/settings/users")}
           className="mb-6 gap-2"
         >
           <ArrowLeft className="size-4" />
