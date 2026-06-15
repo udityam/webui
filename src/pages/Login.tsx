@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import axios from "axios"
+import axios from "axios";
 
 const features = [
   "Centralized privileged access management",
@@ -18,59 +18,59 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-const onSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  sessionStorage.removeItem("isLoggedIn");
-  setLoading(true);
-  setError("");
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    sessionStorage.removeItem("isLoggedIn");
+    setLoading(true);
+    setError("");
 
-  const username =
-    (document.getElementById("username") as HTMLInputElement).value;
+    const username =
+      (document.getElementById("username") as HTMLInputElement).value;
 
-  const password =
-    (document.getElementById("password") as HTMLInputElement).value;
+    const password =
+      (document.getElementById("password") as HTMLInputElement).value;
 
-  try {
-   const response = await axios.post(
-  `${window.location.origin}/api/v1/auth/login`,
-  { username, password },
-  {
-    withCredentials: true,
-  }
-);
+    try {
+      const response = await axios.post(
+        `${window.location.origin}/api/v1/auth/login`,
+        { username, password },
+        {
+          withCredentials: true,
+        }
+      );
 
-console.log("LOGIN RESPONSE:", response.data);
+      console.log("LOGIN RESPONSE:", response.data);
 
- if (response.status === 200) {
+      if (response.status === 200) {
 
-  const token =
-  response.data.access_token ||
-  response.data.token ||
-  response.data.accessToken;
+        const token =
+          response.data.access_token ||
+          response.data.token ||
+          response.data.accessToken;
 
-  sessionStorage.setItem("token", token);
-  localStorage.setItem("token", token);
+        sessionStorage.setItem("token", token);
+        localStorage.setItem("token", token);
 
-  axios.defaults.headers.common["Authorization"] =
-    `Bearer ${token}`;
+        axios.defaults.headers.common["Authorization"] =
+          `Bearer ${token}`;
 
-  sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("isLoggedIn", "true");
 
-  window.location.href = "/console/dashboard";
-}
+        window.location.href = "/console/dashboard";
+      }
 
-  } catch (err: any) {
+    } catch (err: any) {
 
-    if (err.response?.status === 401) {
-      setError("Invalid credentials");
-    } else {
-      setError("Something went wrong");
+      if (err.response?.status === 401) {
+        setError("Invalid credentials");
+      } else {
+        setError("Something went wrong");
+      }
+
+    } finally {
+      setLoading(false);
     }
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
@@ -162,11 +162,11 @@ console.log("LOGIN RESPONSE:", response.data);
               </label>
               <a href="#" className="text-primary hover:underline font-medium">Forgot password?</a>
             </div>
-             {error && (
-                 <p className="text-red-500 text-sm">
-                  {error}
-                </p>
-              )}
+            {error && (
+              <p className="text-red-500 text-sm">
+                {error}
+              </p>
+            )}
             <Button type="submit" className="w-full h-11 group" disabled={loading}>
               {loading ? "Signing in…" : (<>Sign in <ArrowRight className="size-4 ml-1 group-hover:translate-x-0.5 transition-transform" /></>)}
             </Button>
